@@ -17,11 +17,7 @@ class Provider:
         self.msg_queue.append(msg)
 
     def subscribe(self, msg, subscriber):
-        if msg not in self.subscribers:
-            self.subscribers[msg] = []
-            self.subscribers[msg].append(subscriber)  # unfair
-        else:
-            self.subscribers[msg].append(subscriber)
+        self.subscribers.setdefault(msg, []).append(subscriber)
 
     def unsubscribe(self, msg, subscriber):
         self.subscribers[msg].remove(subscriber)
@@ -52,6 +48,9 @@ class Subscriber:
     def subscribe(self, msg):
         self.provider.subscribe(msg, self)
 
+    def unsubscribe(self, msg):
+        self.provider.unsubscribe(msg, self)
+
     def run(self, msg):
         print("{} got {}".format(self.name, msg))
 
@@ -67,6 +66,9 @@ def main():
     jack.subscribe("music")
     gee = Subscriber("gee", message_center)
     gee.subscribe("movie")
+    vani = Subscriber("vani", message_center)
+    vani.subscribe("movie")
+    vani.unsubscribe("movie")
 
     fftv.publish("cartoon")
     fftv.publish("music")

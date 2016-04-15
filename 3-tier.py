@@ -12,15 +12,15 @@ class Data(object):
     }
 
     def __get__(self, obj, klas):
-        print ("(Fetching from Data Store)")
+        print("(Fetching from Data Store)")
         return {'products': self.products}
 
 
 class BusinessLogic(object):
-
     """ Business logic holding data store instances """
 
-    data = Data()
+    def __init__(self, data):
+        self.data = data
 
     def product_list(self):
         return self.data['products'].keys()
@@ -32,14 +32,13 @@ class BusinessLogic(object):
 class Ui(object):
     """ UI interaction class """
 
-    def __init__(self):
-        self.business_logic = BusinessLogic()
+    def __init__(self, logic):
+        self.business_logic = logic
 
     def get_product_list(self):
         print('PRODUCT LIST:')
         for product in self.business_logic.product_list():
-            #print(product)
-            yield product
+            print(product)
         print('')
 
     def get_product_information(self, product):
@@ -55,7 +54,9 @@ class Ui(object):
 
 
 def main():
-    ui = Ui()
+    data = Data()
+    logic = BusinessLogic(data)
+    ui = Ui(logic)
     ui.get_product_list()
     ui.get_product_information('cheese')
     ui.get_product_information('eggs')
@@ -66,6 +67,12 @@ if __name__ == '__main__':
     main()
 
 ### OUTPUT ###
+# PRODUCT LIST:
+# (Fetching from Data Store)
+# cheese
+# eggs
+# milk
+#
 # (Fetching from Data Store)
 # PRODUCT INFORMATION:
 # Name: Cheese, Price: 2.00, Quantity: 10
